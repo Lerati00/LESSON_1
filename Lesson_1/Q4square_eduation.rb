@@ -1,21 +1,21 @@
 puts "Введите a,b,c в уравнение [a*x**2 + b*x + c]"
 puts "Програма выведет значение дискриминанта и корней на экран"
 puts "Введите a"
-a = Integer(gets.chomp)
+a = gets.to_f
 puts "Введите b"
-b = Integer(gets.chomp)
+b = gets.to_f
 puts "Введите c"
-c = Integer(gets.chomp)
+c = gets.to_f
 dis = b**2 - 4 * a * c
-x =[]
 puts "Дискриминант #{dis.to_s}"
-if dis>0
-    x.push((-b+Math.sqrt(dis))/(2* a))
-    x.push((-b-Math.sqrt(dis))/(2* a))
-    puts "Корни [#{x[0].round(4)}] [#{x[1].round(4)}]"
-elsif dis==0
-    x.push(-b/(2* a))
-    puts "Корень [#{x[0]}]"
+if dis > 0
+  sqrt = Math.sqrt(dis)
+  x1 = (-b + sqrt) / (2.0 * a)
+  x2 = (-b - sqrt) / (2.0 * a)
+  puts "Корни [#{x1.round(4)}] [#{x2.round(4)}]"
+elsif dis == 0
+  x = -b / (2 * a)
+  puts "Корень [#{x}]"
 else
-    puts "Корней нет"
+  puts "Корней нет"
 end

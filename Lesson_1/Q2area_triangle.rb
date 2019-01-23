@@ -1,10 +1,6 @@
 puts "Введите онование триугольника?"
-line=gets.chomp
-line = line.to_i
+line = gets.to_f
 puts "Введите высоту триугольника?"
-height=gets.chomp
-height = height.to_i
-
+height = gets.to_f
 area_triangle = 0.5 * line * height
-
-puts "Площадь триугольника #{area_triangle.to_s}"
+puts "Площадь триугольника #{area_triangle}"
