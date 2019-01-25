@@ -25,7 +25,7 @@ else
   if (array_date[2] % 4) ==0
     leap_year = true
     if (array_date[2] % 100) ==0
-        leap_year = false
+      leap_year = false
       if (array_date[2] % 400) ==0
         leap_year = true
       end
@@ -35,7 +35,6 @@ else
   if leap_year
     months[2][:february] += 1
   end
- 
 
   if months.include?(array_date[1])   
     months[array_date[1]].each do |k, days_in_month|
