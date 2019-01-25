@@ -20,21 +20,8 @@ if string_date.scan(reg).empty?
   puts "Формат вводу не коректный"
 else
   array_date = string_date.split(".").collect { |a| a.to_i }
-
-  leap_year = false
-  if (array_date[2] % 4) ==0
-    leap_year = true
-    if (array_date[2] % 100) ==0
-      leap_year = false
-      if (array_date[2] % 400) ==0
-        leap_year = true
-      end
-    end
-  end
-
-  if leap_year
-    months[2][:february] += 1
-  end
+  year = array_date[2]
+  months[2][:february] += 1 if (year % 4 == 0 && !(year % 4 == 0 && year % 100 == 0)) || (year % 400 == 0)
 
   if months.include?(array_date[1])   
     months[array_date[1]].each do |k, days_in_month|
@@ -53,5 +40,5 @@ else
     puts "Неправильно указаный месяц"
   end
 end
-
+sequence_number = "Error" if sequence_number <= 0
 puts "Порядковий номер: #{sequence_number}"
