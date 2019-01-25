@@ -1,4 +1,4 @@
-puts "Введите ваше имя?"
+puts "Введите ваше имя"
 name = gets.chomp.capitalize
 puts "Какой увас рост?"
 height = gets.to_i
@@ -8,5 +8,3 @@ if ideal_weigth > 0
 else
   puts "Ваш вес уже оптимальный" 
 end
-
-

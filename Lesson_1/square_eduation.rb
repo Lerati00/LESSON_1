@@ -14,7 +14,7 @@ if dis > 0
   x2 = (-b - sqrt) / (2.0 * a)
   puts "Корни [#{x1.round(4)}] [#{x2.round(4)}]"
 elsif dis == 0
-  x = -b / (2 * a)
+  x = -b / (2.0 * a)
   puts "Корень [#{x}]"
 else
   puts "Корней нет"
