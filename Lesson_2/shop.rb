@@ -1,31 +1,33 @@
-product = Hash.new({ })
-all_sum = 0.0
+cart = {}
+total = 0.0
+choice = ""
 loop do
   puts "Для выхода введите [stop]"
   puts "Введите название товара"
-  product_name = gets.chomp
-  break if (product_name == "stop")
+  item_name = gets.chomp
+  break if item_name.downcase == "stop"
 
-  puts "Для выхода введите [stop]"
   puts "Введите цену товара"
-  product_price = gets.chomp
-  break if (product_price == "stop")
-  product_price = product_price.to_f.round(2)
+  item_price = gets.to_f.round(2)
+  #Выйти на этапе ввода цены
+  #choice = gets.chomp
+  #break if (choice == "stop")
+  #item_price = choice.to_f.round(2)
 
-  puts "Для выхода введите [stop]"
   puts "Введите количество товара"
-  product_number = gets.chomp
-  break if (product_number == "stop")
-  product_number = product_number.to_i
+  item_quantity = gets.to_i
+  #Выйти на этапе ввода количества
+  #choice = gets.chomp
+  #break if (choice == "stop")
+  #item_quantity = choice.to_i
 
-  product[product_name] = { product_price => product_number }
+  cart[item_name] = { price: item_price, quantity: item_quantity }
 end
+
 puts "Название\tЦена\tКоличество\t\tИтоговая сума"
-product.each do |name, kesh|
-  kesh.each do |price, num|
-    sum = price * num
-    all_sum += sum
-    puts "#{name}\t\t#{price}\t\t#{num}\t\t#{sum}"
-  end
+cart.each do |name, hesh|
+  sum = hesh[:price] * hesh[:quantity]
+  total += sum
+  puts "#{name}\t\t#{hesh[:price]}\t\t#{hesh[:quantity]}\t\t#{sum}"
 end
-puts "Итоговую сумму всех покупок в корзине\t#{all_sum.round(2)}"
+puts "Итоговую сумму всех покупок в корзине\t#{total.round(2)}"

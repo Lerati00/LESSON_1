@@ -1,10 +1,8 @@
 fibonacci = [0, 1]
 loop do
-  size = fibonacci.size
-  fibonacci[size] = fibonacci[size - 1] + fibonacci[size - 2]
-  if fibonacci.size >= 100
-    break
-  end
+  next_number = fibonacci[-1] + fibonacci[-2]
+  break if next_number > 100
+  fibonacci << next_number
 end
 
 fibonacci.each { |f| puts f }
