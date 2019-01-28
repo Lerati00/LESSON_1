@@ -13,7 +13,7 @@ class Train
     speed = 0
   end
 
-  def arrige_add
+  def carrige_add
     self.carriges_count += 1 if speed == 0  
   end
 
@@ -28,12 +28,14 @@ class Train
   end
 
   def next_station
+    return if self.route.nil?
     station_index = self.route.stations.index(@current_station)
     return if station_index >= self.route.stations.size - 1 
     puts "next station is :\t #{self.route.stations[station_index + 1].name}"
   end
 
   def previous_station
+    return if self.route.nil?
     station_index = self.route.stations.index(@current_station)
     return if station_index <= 0
     puts "previous station is :\t #{self.route.stations[station_index - 1].name}"
@@ -45,7 +47,7 @@ class Train
     return if station_index >= self.route.stations.size - 1
 
     self.current_station.send_train(self)
-    self.current_station = self.route.stations[station_index + 1]
+    @current_station = self.route.stations[station_index + 1]
     self.current_station.train_add(self)
   end
 
@@ -55,7 +57,7 @@ class Train
     return if station_index <= 0
 
     self.current_station.send_train(self)
-    self.current_station = self.route.stations[station_index - 1]
+    @current_station = self.route.stations[station_index - 1]
     self.current_station.train_add(self)
   end
 end
