@@ -1,8 +1,2 @@
-vowels = %w(a e i o u)
-hash_vovels = {}
-("a".."z").each_with_index do |letter, index|
-  if vowels.include?(letter)
-    hash_vovels[letter] = index
-    puts "#{letter}: #{index}"
-  end
-end
+hash_vowels = {}
+("a".."z").each_with_index { |letter, index| hash_vowels[letter] = index if !letter.scan(/^(a|e|i|o|u){1}/).empty? }
