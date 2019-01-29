@@ -5,18 +5,18 @@ class Route
     @stations = [from, to]
   end
 
-  def station_add(station)
-    self.stations.insert(-2,station)
+  def add_station(station)
+    return if stations.include?(station)
+    stations.insert(-2,station)
   end
 
-  def station_delete(station)
-    return unless self.stations.include?(station)
-    self.stations.delete(station)
+  def delete_station(station)
+    return if stations[0] == station || stations[-1] == station
+    stations.delete(station)
   end
 
-  def stations_display
-    return if self.stations.empty?
-    self.stations.each {|station| puts station.name}
+  def display_stations
+    stations.each { |station| puts station.name }
   end
 
 end

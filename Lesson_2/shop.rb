@@ -8,7 +8,6 @@ loop do
   break if item_name.downcase == "stop"
 
   puts "Введите цену товара"
-  item_price = gets.to_f.round(2)
   choice = gets.chomp
   break if (choice == "stop")
   item_price = choice.to_f.round(2)
