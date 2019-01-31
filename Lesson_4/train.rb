@@ -1,10 +1,13 @@
-class Train
-  attr_reader :carriges_count, :route, :number, :type, :speed
+require_relative "passenger_carriage.rb"
+require_relative "cargo_carriage.rb"
+
+class Train 
+  attr_reader  :route, :number, :type, :speed, :carriages
   
-  def initialize(number, type, carriges_count)
+  def initialize(number)
     @number = number
-    @type = type
-    @carriges_count = carriges_count
+    @type = "Not speсified"
+    @carriages = []
     @speed = 0
   end
 
@@ -16,12 +19,17 @@ class Train
     @speed = 0
   end
 
-  def add_carrige
-    @carriges_count += 1 if speed == 0  
+  def add_carriage
+    return unless speed == 0
+    @carriages << Carriage.new 
   end
 
-  def delete_carrige
-    @carriges_count -= 1 if speed == 0 && carriges_count > 0
+  def delete_carriage(carriage = @carriages.last)
+    @carriages.delete(carriage) if speed == 0 
+  end
+
+  def carriages_count
+    @carriages.count
   end
 
   def set_route(route)
@@ -30,14 +38,14 @@ class Train
     route.stations[@current_station].add_train(self)
   end
 
-  def current_station
-    return if route.nil?
-    route.stations[@current_station]
-  end
-
   def next_station
     return if route.nil?
     route.stations[@current_station + 1] 
+  end
+
+  def current_station
+    return if route.nil?
+    route.stations[@current_station]
   end
 
   def previous_station
@@ -58,4 +66,5 @@ class Train
     previous_station.add_train(self)
     @current_station -= 1 
   end
+
 end
