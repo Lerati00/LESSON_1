@@ -19,9 +19,9 @@ class Train
     @speed = 0
   end
 
-  def add_carriage
+  def add_carriage(carriage = Carriage.new)
     return unless speed == 0
-    @carriages << Carriage.new 
+    @carriages << carriage if attachable_carriage?(carriage)
   end
 
   def delete_carriage(carriage = @carriages.last)
@@ -65,6 +65,12 @@ class Train
     current_station.send_train(self)
     previous_station.add_train(self)
     @current_station -= 1 
+  end
+
+  protected
+
+  def attachable_carriage?(carriage)
+    true
   end
 
 end

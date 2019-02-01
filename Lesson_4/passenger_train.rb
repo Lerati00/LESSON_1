@@ -7,9 +7,14 @@ class PassengerTrain < Train
     @type = "Passenger"
   end
 
-  def add_carriage
-    return unless @type == "Passenger" && speed == 0
-    @carriages << PassengerCarriage.new 
+  def add_carriage(carriage = PassengerCarriage.new)
+    super
+  end
+  
+  protected
+
+  def attachable_carriage?(carriage)
+    carriage.instance_of?(PassengerCarriage)
   end
 
 end

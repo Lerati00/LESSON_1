@@ -5,6 +5,7 @@ require_relative "station.rb"
 require_relative "menu_constants.rb"
 
 class Main
+  include MenuConstants
   attr_accessor :stations, :trains, :routes
   def initialize
     @stations = []
@@ -42,16 +43,16 @@ class Main
       print TEXT_MAIN_MENU
       choice = gets.chomp
       case choice.downcase
-      when "trains"
+      when "1"
         trains_menu
-      when "stations"
+      when "2"
         stations_menu
-      when "routes"
+      when "3"
         routes_menu
-      when "help"
+      when "4" || "help"
         print TEXT_HELP
         gets
-      when "exit"
+      when "0" || "exit"
         break
       else
         next
@@ -66,19 +67,19 @@ class Main
       print TEXT_TRAINS_MENU
       choice = gets.chomp
       case choice.downcase
-      when "create"
+      when "1"
         create_train
-      when "display_all"
+      when "2"
         display_trains
-      when "set_route"
+      when "3"
         set_route_by_train
-      when "display_route"
+      when "4"
         display_route_by_train
-      when "carriages"
+      when "5"
         redact_carriage
-      when "move"
+      when "6"
         move_train
-      when "menu"
+      when "0" || "menu"
         break
       else
         next
@@ -93,16 +94,16 @@ class Main
       print TEXT_STATIONS_MENU
       choice = gets.chomp
       case choice.downcase
-      when "create"
+      when "1"
         create_station
-      when "display_all"
+      when "2"
         display_stations
-      when "display_trains"
+      when "3"
         display_stations
         puts "Введите индекс станции"
         index_station = gets.to_i
         display_trains(stations[index_station].trains)
-      when "menu"
+      when "0" || "menu"
         break
       else
         next
@@ -117,13 +118,13 @@ class Main
       print TEXT_ROUTES_MENU
       choice = gets.chomp
       case choice.downcase
-      when "create"
+      when "1"
         create_route
-      when "display_all"
+      when "2"
         display_routes
-      when "redact"
+      when "3"
         redact_route
-      when "menu"
+      when "0" || "menu"
         break
       else
         next
@@ -168,50 +169,54 @@ class Main
     puts "Список всех поездов"
     display_trains
     puts "Введите индекс поезда которому хотите задать маршрут"
-    index_train = gets.to_i
+    train = trains[gets.to_i]
+    return puts INVALID_INDEX if train.nil?
     display_routes 
     puts "Введите индекс маршрута который вы хотите задать"
-    index_route = gets.to_i
-    trains[index_train].set_route(routes[index_route])
+    route = routes[gets.to_i]
+    return puts INVALID_INDEX if route.nil? 
+    train.set_route(route)
   end
 
   def display_route_by_train
     display_trains
     puts "Введите индекс поезда маршрут которого хотите вивести"
-    index_train = gets.to_i
-    puts "#{trains[index_train].route.name}"
-    trains[index_train].route.display_stations
+    train = trains[gets.to_i]
+    return puts(INVALID_INDEX) if train.nil?
+    puts "#{train.route.name}"
+    train.route.display_stations
   end
 
   def redact_carriage
     display_trains
     puts "Введите индекс поезда в котором хотите изменить количество вагонов"
-    index_train = gets.to_i
-    puts "Количество вагонов #{trains[index_train].carriages_count}"
-    puts "Чтоби добавить введите [add]"
-    puts "Чтоби добавить введите [delete]"
+    train = trains[gets.to_i]
+    return puts(INVALID_INDEX) if train.nil?
+    puts "Количество вагонов #{train.carriages_count}"
+    puts "Чтоби добавить введите [1]"
+    puts "Чтоби удалить введите [2]"
     choice = gets.chomp
     case choice.downcase
-    when "add"
-      trains[index_train].add_carriage
-    when "delete"
-      trains[index_train].delete_carriage
-    else
+    when "1"
+      train.add_carriage
+    when "2"
+      train.delete_carriage
     end
   end
 
   def move_train
     display_trains
     puts "Введите индекс поезда который хотите переместить"
-    index_train = gets.to_i
-    puts "Чтоби переместить на одну станцию вперед введите [forward]"
-    puts "Чтоби переместить на одну станцию назад введите [back]"
+    train = trains[gets.to_i]
+    return puts(INVALID_INDEX) if train.nil?
+    puts "Чтоби переместить на одну станцию вперед введите [1]"
+    puts "Чтоби переместить на одну станцию назад введите [2]"
     choice = gets.chomp
     case choice.downcase
-    when "forward"
-      trains[index_train].move_forward
-    when "back"
-      trains[index_train].move_back
+    when "1"
+      train.move_forward
+    when "2"
+      train.move_back
     else
     end
   end
@@ -224,65 +229,64 @@ class Main
   def create_route
     display_stations
     puts "Введите индекс начальной станции"
-    first_stantion = gets.to_i
+    first_station = stations[gets.to_i]
+    return puts INVALID_INDEX if first_station.nil? 
     puts "Введите индекс конечной станции"
-    last_stantion = gets.to_i
-    @routes << Route.new(stations[first_stantion], stations[last_stantion])
+    last_station = stations[gets.to_i]
+    return puts INVALID_INDEX if last_station.nil? 
+    @routes << Route.new(first_station, last_station)
     puts "Маршрут создан"
   end
 
   def redact_route
-    loop do
-      display_routes
-      puts "Введите индекс маршрута в котором хотите сделать изменения"
-      puts "Чтоби прекратить введите [stop] "
-      choice = gets.chomp
-      return if choice.downcase == "stop"
-      index_route = choice.to_i
-      puts "Хотите добавить станцию введите [add]"
-      puts "Хотите удалить станцию введите [delete]"
-      puts "Чтоби прекратить введите [stop] "
+    display_routes
+    puts "Введите индекс маршрута в котором хотите сделать изменения"
+    puts "Чтоби прекратить введите [stop] "
+    choice = gets.chomp
+    return if choice.downcase == "stop"
+    route = routes[choice.to_i]
+    return puts(INVALID_INDEX) if route.nil? 
+    puts "Хотите добавить станцию в маршрута #{route.name} введите [1]"
+    puts "Хотите удалить станцию с маршрута #{route.name} введите [2]"
 
-      choice = gets.chomp
-      case choice.downcase
-      when "add"    
-        add_station_by_route(index_route) 
-      when "delete"
-        delete_station_by_route(index_route)
-      when "stop"
-        break
-      else 
-        next
-      end
+    choice = gets.chomp
+    case choice.downcase
+    when "1"    
+      add_station_by_route(route) 
+    when "2"
+      delete_station_by_route(route)
+    when "stop"
     end
   end
 
-  def add_station_by_route(index_route)
+  def add_station_by_route(route)
     loop do
       puts "Список всех станций"
       display_stations
       puts "Список всех станций в маршруте"
-      display_stations(routes[index_route].stations)
-      puts "Введите индекс cтанции из \"Список всех станций\", которую хотите добавить в маршрут \"#{routes[index_route].stations[0].name}-#{routes[index_route].stations[-1].name}\""
+      display_stations(route.stations)
+      puts "Введите индекс cтанции из \"Список всех станций\", которую хотите добавить в маршрут \"#{route.name}\""
       puts "Чтоби прекратить введите [stop] "
       choice = gets.chomp
       break if choice.downcase == "stop"
-      index_station = choice.to_i
-      routes[index_route].add_station(stations[index_station])
+      station = stations[choice.to_i]
+      return puts INVALID_INDEX if station.nil? 
+      route.add_station(station)
     end
   end
 
-  def delete_station_by_route(index_route)
+  def delete_station_by_route(route)
     loop do
       puts "Список всех станций в маршруте"
-      display_stations(routes[index_route].stations)
-      puts "Введите индекс cтанции из \"Список всех станций в маршруте\", которую хотите удалить из маршрута \"#{routes[index_route].stations[0].name}-#{routes[index_route].stations[-1].name}\""
+      display_stations(route.stations)
+      puts "Введите индекс cтанции из \"Список всех станций в маршруте\", которую хотите удалить из маршрута \"#{route.name}\""
       puts "Вы не можете удалить начальую и конечную станции"
-      puts "Чтоби прекратить введите [stop] "
+      puts "Чтоби прекратить введите [stop]  "
       choice = gets.chomp
       break if choice.downcase == "stop"
-      index_station = choice.to_i
-      routes[index_route].delete_station(routes[index_route].stations[index_station])
+      station = route.stations[choice.to_i]
+      return puts INVALID_INDEX if station.nil?
+      route.delete_station(station)
     end
   end
 
