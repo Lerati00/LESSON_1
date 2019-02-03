@@ -1,14 +1,27 @@
 require_relative "passenger_carriage.rb"
 require_relative "cargo_carriage.rb"
+require_relative "manufacturer.rb"
+require_relative "instance_counter.rb"
 
 class Train 
-  attr_reader  :route, :number, :type, :speed, :carriages
+  include Manufacturer 
+  include InstanceCounter
   
-  def initialize(number)
+  attr_reader  :route, :number, :type, :speed, :carriages
+
+  @@trains = []
+  
+  def initialize(number) 
     @number = number
     @type = "Not speсified"
     @carriages = []
     @speed = 0
+    @@trains << self
+    register_instance
+  end
+
+  def self.find(number)
+    @@trains.select { |train| train.number == number}
   end
 
   def accelerate(accelerate_by = 10)
