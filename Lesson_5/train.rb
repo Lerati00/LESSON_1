@@ -12,7 +12,8 @@ class Train
   @@trains = {}
   
   def initialize(number) 
-    @number = number
+    valid?
+    @number = number 
     @type = "Not speсified"
     @carriages = []
     @speed = 0
@@ -21,7 +22,7 @@ class Train
   end
 
   def self.find(number)
-    @@trains.[number]
+    @@trains[number]
   end
 
   def accelerate(accelerate_by = 10)

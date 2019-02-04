@@ -4,6 +4,9 @@ require_relative "manufacturer.rb"
 require_relative "instance_counter.rb"
 
 class Train 
+  INVALIDE_NUMBER_FORMAT = "Неправильный формат. Формат \"ххх-хх\" или \"ххххх\" где \"х\" буква или цифра "
+  NUMBER_FORMAT = /^[\wа-яё]{3}-?[\wа-яё]{2}$/i
+
   include Manufacturer 
   include InstanceCounter
   
@@ -13,6 +16,7 @@ class Train
   
   def initialize(number) 
     @number = number
+    validate!
     @type = "Not speсified"
     @carriages = []
     @speed = 0
@@ -20,8 +24,15 @@ class Train
     register_instance
   end
 
+  def valid?
+    validate!
+    true
+  rescue
+    false
+  end
+
   def self.find(number)
-    @@trains.[number]
+    @@trains[number]
   end
 
   def accelerate(accelerate_by = 10)
@@ -81,6 +92,10 @@ class Train
   end
 
   protected
+
+  def validate!
+    raise INVALIDE_NUMBER_FORMAT if number !~ NUMBER_FORMAT
+  end
 
   def attachable_carriage?(carriage)
     true

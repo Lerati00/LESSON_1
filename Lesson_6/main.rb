@@ -16,16 +16,16 @@ class Main
 
   def default_data  
     @trains = [
-      PassengerTrain.new("P200"), 
-      PassengerTrain.new("P201"), 
-      PassengerTrain.new("P202"), 
-      PassengerTrain.new("P203"), 
-      PassengerTrain.new("P204"),
-      CargoTrain.new("C101"),
-      CargoTrain.new("C102"),
-      CargoTrain.new("C103"),
-      CargoTrain.new("C104"),
-      CargoTrain.new("C105")
+      PassengerTrain.new("P2000"), 
+      PassengerTrain.new("P2010"), 
+      PassengerTrain.new("P2002"), 
+      PassengerTrain.new("P20-30"), 
+      PassengerTrain.new("P2004"),
+      CargoTrain.new("C1010"),
+      CargoTrain.new("C10-20"),
+      CargoTrain.new("C1003"),
+      CargoTrain.new("C1004"),
+      CargoTrain.new("C1005")
     ]
     @stations = [
       Station.new("Львов"),
@@ -105,10 +105,13 @@ class Main
   end
 
   def create_station
-    puts "Введите название станции"
-    name = gets.chomp
-    @stations << Station.new(name)
-    puts "Станция успешно созданa"
+    puts SET_NAME_STATION
+    station = Station.new(gets.chomp)
+    @stations << station
+    puts CREATED_STATION + station.name
+    rescue RuntimeError => e
+      puts e.message
+    retry
   end
 
   def display_stations(stations = self.stations)
@@ -117,22 +120,17 @@ class Main
   end
 
   def create_train
-    @message = "Поезд успешно создан"
-    puts "Введите бортовой номер поезда"
-    number = gets.chomp
-    puts "Введите тип поезда "
-    puts "Если пассажирский введите [P](Passenger)"
-    puts "Если грузовой введите [C](Cargo)"
-    choice = gets.chomp
-    case choice.downcase
-    when "p" || "passenger"
-      @trains << PassengerTrain.new(number)
-    when "c" || "cargo"
-      @trains << CargoTrain.new(number)
-    else
-      @message = "Неправильно введен тип поезда"
-    end
-    puts message
+    puts SELECT_TYPE_TRAIN
+    type_train = get_by_index([PassengerTrain, CargoTrain], gets.to_i - 1) while type_train.nil? 
+    begin
+      puts SET_NUMBER_TRAIN
+      number = gets.chomp 
+      train = type_train.new(number)
+      @trains << train
+      puts CREATED_TRAIN + "#{train.type} #{train.number}"
+    rescue RuntimeError => e
+      puts e.message
+    retry
   end
 
   def set_route_by_train
@@ -213,8 +211,13 @@ class Main
     puts "Введите индекс конечной станции"
     last_station = get_by_index(stations, gets)
     return error_message(INVALID_INDEX) if last_station.nil? 
-    @routes << Route.new(first_station, last_station)
-    puts "Маршрут создан"
+    route = Route.new(first_station, last_station)
+    @routes << route
+    puts CREATED_ROUTE + route.name
+    rescue RuntimeError => e
+      puts e.message
+      retry
+    end
   end
 
   def redact_route

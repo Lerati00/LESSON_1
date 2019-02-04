@@ -64,5 +64,12 @@ module MenuConstants
   HELP
 
   INVALID_INDEX = "Не существующий индекс"
+  SELECT_TYPE_TRAIN = "Введите тип поезда (1 - Passenger/ 2 - Cargo)"
+  SET_NAME_STATION = "Введите название станции"
+  SET_NUMBER_TRAIN = "Введите номер поезда"
+  CREATED_ROUTE = "Создан маршрут : "
+  CREATED_STATION = "Создана станция : "
+  CREATED_TRAIN = "Создан поезд : "
+
   
 end
