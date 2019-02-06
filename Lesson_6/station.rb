@@ -7,14 +7,14 @@ class Station
 
   attr_reader :name, :trains
   
-  @@stations = {}
+  @@stations = []
 
   def initialize(name)
     @name = name
     validate!
     @trains = []
     register_instance
-    @@stations[name] = self
+    @@stations <<  self
   end
 
   def valid?
@@ -40,6 +40,8 @@ class Station
   def send_train(train)
     trains.delete(train)
   end
+
+  private
 
   def validate!
     raise NIL_NAME_ERROR if name.nil? || name == ""

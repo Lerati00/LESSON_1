@@ -109,8 +109,8 @@ class Main
     station = Station.new(gets.chomp)
     @stations << station
     puts CREATED_STATION + station.name
-    rescue RuntimeError => e
-      puts e.message
+  rescue RuntimeError => e
+    puts e.message
     retry
   end
 
@@ -130,7 +130,8 @@ class Main
       puts CREATED_TRAIN + "#{train.type} #{train.number}"
     rescue RuntimeError => e
       puts e.message
-    retry
+      retry
+    end
   end
 
   def set_route_by_train
@@ -163,7 +164,7 @@ class Main
     return error_message(INVALID_INDEX) if train.nil? 
     return error_message("В поезде отсутствует маршрут") if train.route.nil?
     puts "#{train.route.name}"
-    train.route.display_stations
+    train.route.stations.each { |station| puts station.name }
   end
 
   def redact_carriage
@@ -214,10 +215,9 @@ class Main
     route = Route.new(first_station, last_station)
     @routes << route
     puts CREATED_ROUTE + route.name
-    rescue RuntimeError => e
-      puts e.message
-      retry
-    end
+  rescue RuntimeError => e
+    puts e.message
+    retry
   end
 
   def redact_route
@@ -252,18 +252,19 @@ class Main
   end
 
   def delete_station_by_route(route)
-    loop do
-      puts "Список всех станций в маршруте"
-      display_stations(route.stations)
-      puts "Введите индекс cтанции из \"Список всех станций в маршруте\", которую хотите удалить из маршрута \"#{route.name}\""
-      puts "Вы не можете удалить начальую и конечную станции"
-      puts "Чтоби прекратить введите [stop] "
-      choice = gets.chomp
-      break if stop?(choice) 
-      station = get_by_index(route.stations, choice)
-      return error_message(INVALID_INDEX) if station.nil? 
-      route.delete_station(station)
-    end
+    puts "Список всех станций в маршруте"
+    display_stations(route.stations)
+    puts "Введите индекс cтанции из \"Список всех станций в маршруте\", которую хотите удалить из маршрута \"#{route.name}\""
+    puts "Вы не можете удалить начальую и конечную станции"
+    puts "Чтоби прекратить введите [stop] "
+    choice = gets.chomp
+    return if stop?(choice) 
+    station = get_by_index(route.stations, choice)
+    raise INVALID_INDEX if station.nil? 
+    route.delete_station(station)
+  rescue RuntimeError => e
+    puts e.message
+    retry  
   end
 
   def display_routes
