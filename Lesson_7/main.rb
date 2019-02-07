@@ -5,12 +5,13 @@ require_relative "station.rb"
 require_relative "menu_constants.rb"
 
 class Main
-  attr_accessor :stations, :trains, :routes 
+  attr_accessor :stations, :trains, :routes, :carriages
 
   def initialize
     @stations = []
     @trains = []
     @routes = []
+    @carriages = []
     @message = ""
   end
 
@@ -35,6 +36,15 @@ class Main
       Station.new("Чоп"),
       Station.new("Хмельницк"),
     ]
+
+    @carriages = [
+      PassengerCarriage.new(100), 
+      CargoCarriage.new(100),
+      CargoCarriage.new(100),
+      CargoCarriage.new(100),
+      CargoCarriage.new(100),
+      CargoCarriage.new(100)
+    ]
      
     5.times.each { |index| @routes << Route.new(@stations[0], @stations[index]) unless index == 0 }
   end
@@ -45,8 +55,9 @@ class Main
       case gets.to_i
       when 1 then trains_menu     
       when 2 then stations_menu    
-      when 3 then routes_menu    
-      when 4 then press_enter unless print(HELP)
+      when 3 then routes_menu  
+      when 4 then carriages_menu  
+      when 5 then press_enter unless print(HELP)
       when 0 then break   
       else next 
       end
@@ -68,7 +79,8 @@ class Main
       when 3 then set_route_by_train       
       when 4 then display_route_by_train       
       when 5 then redact_carriage   
-      when 6 then move_train    
+      when 6 then move_train 
+      when 7 then display_carriages_by_train   
       when 0 then break      
       else next     
       end
@@ -153,8 +165,9 @@ class Main
     display_stations
     puts "Введите индекс станции"
     station = get_by_index(stations, gets)
-    return error_message(INVALID_INDEX) if station.nil? 
-    display_trains(station.trains)
+    return error_message(INVALID_INDEX) if station.nil?
+    puts "Бортовой номер\tТип\t\tКоличество вагонов" 
+    station.each_train { |train| puts "#{train.number}\t\t#{train.type}\t\t#{train.carriages_count}" }
   end
 
   def display_route_by_train
@@ -175,9 +188,12 @@ class Main
     puts "Количество вагонов #{train.carriages_count}"
     puts "Чтоби добавить введите [1]"
     puts "Чтоби удалить введите [2]"
+    carriage = (carriages.select { |carriage| carriage.type == train.type && carriage.train != train }).first
+    return puts CAR_SHORTAGE_ERROR if carriage.nil?
+    carriage.train = train
     case gets.to_i
-    when 1 then @message = "Вагон добавлен" if train.add_carriage   
-    when 2 then @message = "Вагон отцеплен" if train.delete_carriage  
+    when 1 then @message = "Вагон добавлен" if train.add_carriage(carriage)   
+    when 2 then @message = "Вагон отцеплен" if train.delete_carriage 
     else @message = "Вы ввели недопустимое значенние"
     end
     puts message
@@ -294,6 +310,71 @@ class Main
   def stop?(stop)
     stop.chomp.downcase == "stop"  
   end
+
+  def carriages_menu
+    loop do
+      print CARRIAGES_MENU
+      case gets.to_i
+      when 1 then create_carriage  
+      when 2 then reserve_in_carriage
+      when 3 then display_carriages
+      when 0 then break
+      else next
+      end
+      press_enter
+    end
+  end
+
+  def create_carriage
+    puts SELECT_TYPE_CARRIAGE
+    carriage_type = get_by_index([PassengerCarriage, CargoCarriage], gets.to_i - 1) while carriage_type.nil?
+    message = carriage_type == PassengerCarriage ? "Введите количество мест" : "Введите обьем вагона"
+    puts message
+    carriage = carriage_type == PassengerCarriage ? carriage_type.new(gets.to_i) : carriage_type.new(gets.to_f)
+    carriages << carriage
+    puts CREATED_CARRIAGE + carriage.type
+  rescue RuntimeError => e
+    puts e.message
+    retry
+  end
+
+  def display_carriages_by_train
+    display_trains
+    puts "Введите индекс поезда, вагоны которого хотите вывести"
+    train = get_by_index(trains, gets)
+    return error_message(INVALID_INDEX) if train.nil? 
+    if train.is_a?(PassengerTrain)
+      puts "Номер\t\tТип\t\tКол-во мест\t\tКол-во занятих мест"
+      train.each_carriage { |carriage, index| puts "#{index + 1}\t\t#{carriage.type}\t\t#{carriage.number_places}\t\t#{carriage.taking_places}"} 
+    elsif train.is_a?(CargoTrain)
+      puts "Номер\t\tТип\t\tОбъем\t\tЗанятый объем"
+      train.each_carriage { |carriage, index| puts "#{index + 1}\t\t#{carriage.type}\t\t#{carriage.volume}\t\t#{carriage.taking_volume}"} 
+    end
+  end
+
+  def display_carriages
+    puts "Индекс\t\tТип\t\tМесто/Обьем\tЗанято"
+    carriages.each_with_index do |carriage, index|
+      puts "#{index}\t\t#{carriage.type}\t#{carriage.number_places}\t\t#{carriage.taking_places}" if carriage.type == "Passenger"
+      puts "#{index}\t\t#{carriage.type}\t\t#{carriage.volume}\t\t#{carriage.taking_volume}" if carriage.type == "Cargo"
+    end 
+  end
+
+  def reserve_in_carriage
+    display_carriages
+    puts "Введите индекс вагона, в котором хотите занять место"
+    carriage = get_by_index(carriages, gets)
+    return error_message(INVALID_INDEX) if carriage.nil?
+    carriage.take_place if carriage.is_a?(PassengerCarriage) 
+    if carriage.is_a?(CargoCarriage) 
+      print "Введите обьем которий хотите занять: "
+      carriage.take_volume(gets.to_f)
+    end
+    puts "Выполнено"
+  rescue RuntimeError => e
+    puts e.message
+  end
+  
 end
 
 main = Main.new

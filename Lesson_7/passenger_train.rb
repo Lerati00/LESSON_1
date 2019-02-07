@@ -7,7 +7,8 @@ class PassengerTrain < Train
     @type = "Passenger"
   end
 
-  def add_carriage(carriage = PassengerCarriage.new)
+  def add_carriage(carriage)
+    raise unless carriage.is_a?(PassengerCarriage)
     super
   end
   

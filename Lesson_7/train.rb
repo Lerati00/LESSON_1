@@ -91,6 +91,10 @@ class Train
     @current_station -= 1 
   end
 
+  def each_carriage
+    carriages.each_with_index { |carriage, index| yield(carriage, index) }
+  end
+
   protected
 
   def validate!

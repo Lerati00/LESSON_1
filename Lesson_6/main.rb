@@ -46,7 +46,8 @@ class Main
       when 1 then trains_menu     
       when 2 then stations_menu    
       when 3 then routes_menu    
-      when 4 then press_enter unless print(HELP)
+      when 4 then carriages_menu   
+      when 5 then press_enter unless print(HELP)
       when 0 then break   
       else next 
       end
@@ -255,7 +256,6 @@ class Main
     puts "Список всех станций в маршруте"
     display_stations(route.stations)
     puts "Введите индекс cтанции из \"Список всех станций в маршруте\", которую хотите удалить из маршрута \"#{route.name}\""
-    puts "Вы не можете удалить начальую и конечную станции"
     puts "Чтоби прекратить введите [stop] "
     choice = gets.chomp
     return if stop?(choice) 
