@@ -354,10 +354,7 @@ class Main
 
   def display_carriages
     puts "Индекс\t\tТип\t\tМесто/Обьем\tЗанято"
-    carriages.each_with_index do |carriage, index|
-      puts "#{index}\t\t#{carriage.type}\t#{carriage.number_places}\t\t#{carriage.taking_places}" if carriage.type == "Passenger"
-      puts "#{index}\t\t#{carriage.type}\t\t#{carriage.volume}\t\t#{carriage.taking_volume}" if carriage.type == "Cargo"
-    end 
+    carriages.each_with_index { |carriage, index| puts "#{index}\t\t#{carriage.type}\t\t#{carriage.total}\t\t#{carriage.busy}" }
   end
 
   def reserve_in_carriage
