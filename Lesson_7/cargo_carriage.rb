@@ -1,9 +1,6 @@
 require_relative "carriage.rb"
 
 class CargoCarriage < Carriage
-  
-
-  attr_reader :volume, :taking_volume
 
   def initialize(volume)
     super(volume)

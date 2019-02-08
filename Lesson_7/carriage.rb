@@ -1,8 +1,6 @@
 require_relative "manufacturer.rb"
 
 class Carriage
-  ZERO_ERROR = "Не может быть нулем"
-  OVERLOADED = "Перегружен"
 
   include Manufacturer
   attr_accessor :train
@@ -27,6 +25,9 @@ class Carriage
   end
 
   private
+  
+  ZERO_ERROR = "Не может быть нулем"
+  OVERLOADED = "Перегружен"
 
   def validate!
     raise ZERO_ERROR if total <= 0 || total.nil?
