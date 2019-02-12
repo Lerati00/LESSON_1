@@ -1,46 +1,47 @@
-require_relative "instance_counter.rb"
+require_relative 'instance_counter.rb'
 
 class Station
-  NIL_NAME_ERROR = "Название станции не может быть пустым"
+  NIL_NAME_ERROR = 'Название станции не может быть пустым'.freeze
 
   include InstanceCounter
 
   attr_reader :name, :trains
-  
-  @@stations = []
+
+  @stations = []
 
   def initialize(name)
     @name = name
     validate!
     @trains = []
     register_instance
-    @@stations <<  self
+    @stations << self
   end
 
   def valid?
     validate!
     true
-  rescue
+  rescue StandardError
     false
   end
 
   def self.all
-    @@stations
+    @stations
   end
 
   def add_train(train)
     return if trains.include?(train)
+
     @trains << train
   end
 
   def trains_by_type(type)
-    trains.select { |train| train.type == type }  
+    trains.select { |train| train.type == type }
   end
 
   def send_train(train)
     trains.delete(train)
   end
-  
+
   def each_train
     trains.each { |train| yield(train) }
   end
@@ -48,7 +49,6 @@ class Station
   private
 
   def validate!
-    raise NIL_NAME_ERROR if name.nil? || name == ""
+    raise NIL_NAME_ERROR if name.nil? || name == ''
   end
-
 end
