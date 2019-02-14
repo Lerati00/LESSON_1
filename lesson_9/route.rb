@@ -1,25 +1,25 @@
 require_relative 'instance_counter.rb'
+require_relative 'validation.rb'
+require_relative 'station.rb'
 
 class Route
-  STATION_OBJECT_ERROR = "Начальная или конечная станция не является объектом класса 'Station'".freeze
-  STATION_EQUALS_ERROR = 'Начальная и конечная станции не должны совпадать'.freeze
-
   include InstanceCounter
+  include Validation
 
   attr_reader :stations, :name
 
+  validate :stations,       :presence
+  validate :first_stantion, :type,     Station
+  validate :last_stantion,  :type,     Station
+  validate :first_stantion, :equals, :last_stantion
+
   def initialize(from, to)
+    @first_stantion = from
+    @last_stantion = to
     @stations = [from, to]
     validate!
     @name = "#{from.name}-#{to.name}"
     register_instance
-  end
-
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
   end
 
   def add_station(station)
@@ -33,12 +33,5 @@ class Route
     return if [stations.first, stations.last].include?(station)
 
     stations.delete(station)
-  end
-
-  private
-
-  def validate!
-    raise STATION_OBJECT_ERROR unless @stations[0].is_a?(Station) && @stations[-1].is_a?(Station)
-    raise STATION_EQUALS_ERROR if @stations[0] == @stations[-1]
   end
 end

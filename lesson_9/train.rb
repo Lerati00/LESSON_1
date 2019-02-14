@@ -2,34 +2,36 @@ require_relative 'passenger_carriage.rb'
 require_relative 'cargo_carriage.rb'
 require_relative 'manufacturer.rb'
 require_relative 'instance_counter.rb'
+require_relative 'validation.rb'
+require_relative 'accessor.rb'
 
 class Train
-  INVALIDE_NUMBER_FORMAT = 'Неправильный формат. Формат "ххх-хх" или "ххххх" где "х" буква или цифра '.freeze
-  NUMBER_FORMAT = /^[\wа-яё]{3}-?[\wа-яё]{2}$/i.freeze
-
   include Manufacturer
   include InstanceCounter
+  include Validation
+  extend Accessor
 
-  attr_reader :route, :number, :type, :speed, :carriages
+  NUMBER_FORMAT = /^[\wа-яё]{3}-?[\wа-яё]{2}$/i.freeze
 
+  attr_reader :number,
+              :type,
+              :carriages
 
+  attr_accessor_with_history :speed, :route
+
+  validate :number, :presence
+  validate :number, :format,   NUMBER_FORMAT
+  validate :number, :type,     String
 
   def initialize(number)
     @number = number
     validate!
-    @type = 'Not speсified'
+    @type      = 'Not speсified'
     @carriages = []
-    @speed = 0
-    @trains = {}
+    @speed     = 0
+    @trains    = {}
     @trains[number] ||= self
     register_instance
-  end
-
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
   end
 
   def self.find(number)
@@ -101,11 +103,4 @@ class Train
   def each_carriage_with_index
     carriages.each_with_index { |carriage, index| yield(carriage, index) }
   end
-
-  protected
-
-  def validate!
-    raise INVALIDE_NUMBER_FORMAT if number !~ NUMBER_FORMAT
-  end
-
 end

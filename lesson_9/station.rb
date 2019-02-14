@@ -1,20 +1,23 @@
 require_relative 'instance_counter.rb'
+require_relative 'validation.rb'
 
 class Station
-  NIL_NAME_ERROR = 'Название станции не может быть пустым'.freeze
-
   include InstanceCounter
+  include Validation
 
   attr_reader :name, :trains
 
-  @stations = []
+  validate :name, :presence
+  validate :name, :type, String
+
+  @@stations = []
 
   def initialize(name)
     @name = name
     validate!
     @trains = []
     register_instance
-    @stations << self
+    @@stations << self
   end
 
   def valid?
@@ -25,7 +28,7 @@ class Station
   end
 
   def self.all
-    @stations
+    @@stations
   end
 
   def add_train(train)
@@ -44,11 +47,5 @@ class Station
 
   def each_train
     trains.each { |train| yield(train) }
-  end
-
-  private
-
-  def validate!
-    raise NIL_NAME_ERROR if name.nil? || name == ''
   end
 end

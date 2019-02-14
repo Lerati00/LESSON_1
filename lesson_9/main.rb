@@ -15,6 +15,40 @@ class Main
     @message = ''
   end
 
+  def default_data
+    @trains = [
+      PassengerTrain.new('P2000'),
+      PassengerTrain.new('P2010'),
+      PassengerTrain.new('P2002'),
+      PassengerTrain.new('P20-30'),
+      PassengerTrain.new('P2004'),
+      CargoTrain.new('C1010'),
+      CargoTrain.new('C10-20'),
+      CargoTrain.new('C1003'),
+      CargoTrain.new('C1004'),
+      CargoTrain.new('C1005')
+    ]
+    @stations = [
+      Station.new('Львов'),
+      Station.new('Киев'),
+      Station.new('Тернопиль'),
+      Station.new('Краков'),
+      Station.new('Чоп'),
+      Station.new('Хмельницк')
+    ]
+
+    @carriages = [
+      PassengerCarriage.new(100),
+      CargoCarriage.new(100),
+      CargoCarriage.new(100),
+      CargoCarriage.new(100),
+      CargoCarriage.new(100),
+      CargoCarriage.new(100)
+    ]
+
+    5.times.each { |index| @routes << Route.new(@stations[0], @stations[index]) unless index == 0 }
+  end
+
   def main_menu
     loop do
       print MAIN_MENU
@@ -124,7 +158,7 @@ class Main
     route = get_by_index(routes, gets)
     return error_message(INVALID_INDEX) if route.nil?
 
-    train.set_route(route)
+    train.route = route
     @message = 'Маршрут успешно создан'
     puts message
   end
@@ -341,7 +375,7 @@ class Main
                  carriage_type.new(gets.to_f)
                end
     carriages << carriage
-    puts CREATED_CARRIAGE + carriage.type
+    puts CREATED_CARRIAGE + carriage.type.to_s
   rescue RuntimeError => e
     puts e.message
     retry
@@ -392,4 +426,5 @@ class Main
 end
 
 main = Main.new
+main.default_data
 main.main_menu
