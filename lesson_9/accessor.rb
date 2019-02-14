@@ -26,7 +26,7 @@ module Accessor
     define_method(name) { instance_variable_get("@#{name}") }
 
     define_method("#{name}=") do |value|
-      raise TypeError, 'Не совпадает тип значения' unless value.is_a?(type)
+      raise TypeError, 'Не совпадает тип значения' unless value.class.to_s == type
 
       instance_variable_set("@#{name}", value)
     end

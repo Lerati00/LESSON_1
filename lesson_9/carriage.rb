@@ -1,7 +1,6 @@
 require_relative 'manufacturer.rb'
 require_relative 'validation.rb'
 require_relative 'accessor.rb'
-require_relative 'train.rb'
 
 class Carriage
   include Manufacturer
@@ -9,6 +8,7 @@ class Carriage
   extend Accessor
 
   attr_reader :type, :total, :busy
+  strong_attr_accessor :train, 'Train'
 
   validate :total, :zero
 
